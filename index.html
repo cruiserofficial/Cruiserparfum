@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUISER — Luxury in Every Note</title>
+  <meta name="description" content="CRUISER Extrait De Parfume — Three signature scents: Eternity, Noctis, Liberea. Luxury in every note." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- ══════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">CRUISER</a>
+      <ul class="nav-links">
+        <li><a href="#collection">Collection</a></li>
+        <li><a href="#scent-finder">Find Yours</a></li>
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#shop">Shop</a></li>
+      </ul>
+      <a href="https://www.instagram.com/cruiser.official?igsh=MXdua2I4aDNubDBtMg%3D%3D&utm_source=qr" target="_blank" rel="noopener" class="nav-ig">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        <span>@cruiser.official</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="navMobile">
+      <a href="#collection" class="nav-mobile-link">Collection</a>
+      <a href="#scent-finder" class="nav-mobile-link">Find Your Scent</a>
+      <a href="#eternity" class="nav-mobile-link">Eternity</a>
+      <a href="#noctis" class="nav-mobile-link">Noctis</a>
+      <a href="#liberea" class="nav-mobile-link">Liberea</a>
+      <a href="#story" class="nav-mobile-link">Our Story</a>
+      <a href="#testimonials" class="nav-mobile-link">Reviews</a>
+      <a href="#shop" class="nav-mobile-link">Shop</a>
+      <a href="https://www.instagram.com/cruiser.official?igsh=MXdua2I4aDNubDBtMg%3D%3D&utm_source=qr" target="_blank" rel="noopener" class="nav-mobile-link">Instagram</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="img/hero-banner.png" alt="CRUISER — Eternity, Noctis, Liberea" class="hero-img" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="particles-container" id="particles"></div>
+    <div class="hero-content">
+      <p class="hero-est">est. 2026 &nbsp;·&nbsp; Extrait De Parfume</p>
+      <h1 class="hero-title" aria-label="CRUISER">
+        <span class="letter">C</span><span class="letter">R</span><span class="letter">U</span><span class="letter">I</span><span class="letter">S</span><span class="letter">E</span><span class="letter">R</span>
+      </h1>
+      <div class="hero-ornament">
+        <span class="ornament-line"></span>
+        <span class="ornament-diamond">◆</span>
+        <span class="ornament-line"></span>
+      </div>
+      <p class="hero-tagline">"Luxury in Every Note."</p>
+      <a href="#collection" class="hero-cta">Explore Collection</a>
+    </div>
+    <div class="scroll-indicator">
+      <span class="scroll-label">Scroll</span>
+      <div class="scroll-line"><div class="scroll-dot"></div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       COLLECTION OVERVIEW
+  ═══════════════════════════════════════════ -->
+  <section class="collection" id="collection">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <p class="section-label">Our Collection</p>
+        <h2 class="section-title">Three Signatures. One Identity.</h2>
+        <p class="section-sub">Each scent tells a story — find the one that speaks to you.</p>
+        <div class="section-ornament"><span></span><span>◆</span><span></span></div>
+      </div>
+      <div class="products-grid">
+        <article class="product-card reveal-up" data-color="eternity">
+          <div class="card-img-wrap">
+            <img src="img/eternity-splash.png" alt="ETERNITY by CRUISER" loading="lazy" />
+            <div class="card-overlay"></div>
+            <div class="card-glow"></div>
+          </div>
+          <div class="card-body">
+            <p class="card-dna">Fresh · Sweet · Addictive</p>
+            <h3 class="card-name">ETERNITY</h3>
+            <p class="card-tagline">"Freshness That Lingers."</p>
+            <a href="#eternity" class="card-btn">Discover</a>
+          </div>
+        </article>
+        <article class="product-card featured reveal-up" data-color="noctis" style="transition-delay:.15s">
+          <div class="card-img-wrap">
+            <img src="img/noctis-splash.png" alt="NOCTIS by CRUISER" loading="lazy" />
+            <div class="card-overlay"></div>
+            <div class="card-glow"></div>
+            <div class="card-badge">Bestseller</div>
+          </div>
+          <div class="card-body">
+            <p class="card-dna">Warm · Sensual · Deep</p>
+            <h3 class="card-name">NOCTIS</h3>
+            <p class="card-tagline">"Embrace the Night."</p>
+            <a href="#noctis" class="card-btn">Discover</a>
+          </div>
+        </article>
+        <article class="product-card reveal-up" data-color="liberea" style="transition-delay:.3s">
+          <div class="card-img-wrap">
+            <img src="img/liberea-splash.png" alt="LIBEREA by CRUISER" loading="lazy" />
+            <div class="card-overlay"></div>
+            <div class="card-glow"></div>
+          </div>
+          <div class="card-body">
+            <p class="card-dna">Creamy · Fresh · Comforting</p>
+            <h3 class="card-name">LIBEREA</h3>
+            <p class="card-tagline">"Softness in Every Note."</p>
+            <a href="#liberea" class="card-btn">Discover</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SCENT FINDER QUIZ
+  ═══════════════════════════════════════════ -->
+  <section class="scent-finder" id="scent-finder">
+    <div class="sf-bg"></div>
+    <div class="container">
+      <div class="section-header reveal-up">
+        <p class="section-label">Scent Finder</p>
+        <h2 class="section-title">Temukan Parfum yang Tepat Untukmu</h2>
+        <p class="section-sub">Jawab 2 pertanyaan singkat — kami rekomendasikan yang cocok.</p>
+      </div>
+
+      <div class="sf-quiz reveal-up">
+        <!-- Step 1 -->
+        <div class="sf-step active" id="sf-step1">
+          <p class="sf-question">Karakter wangi seperti apa yang kamu suka?</p>
+          <div class="sf-options">
+            <button class="sf-option" data-step="1" data-val="fresh">
+              <span class="sf-option-icon">🍋</span>
+              <span class="sf-option-label">Segar &amp; Buah</span>
+              <span class="sf-option-sub">Cerah, ringan, hidup</span>
+            </button>
+            <button class="sf-option" data-step="1" data-val="warm">
+              <span class="sf-option-icon">🍯</span>
+              <span class="sf-option-label">Hangat &amp; Sensual</span>
+              <span class="sf-option-sub">Dalam, misterius, intim</span>
+            </button>
+            <button class="sf-option" data-step="1" data-val="soft">
+              <span class="sf-option-icon">🌸</span>
+              <span class="sf-option-label">Lembut &amp; Creamy</span>
+              <span class="sf-option-sub">Nyaman, bersih, mewah</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="sf-step" id="sf-step2">
+          <p class="sf-question">Kapan kamu paling sering pakai parfum?</p>
+          <div class="sf-options">
+            <button class="sf-option" data-step="2" data-val="day">
+              <span class="sf-option-icon">☀️</span>
+              <span class="sf-option-label">Aktivitas Siang</span>
+              <span class="sf-option-sub">Kerja, kampus, hangout</span>
+            </button>
+            <button class="sf-option" data-step="2" data-val="night">
+              <span class="sf-option-icon">🌙</span>
+              <span class="sf-option-label">Malam Hari</span>
+              <span class="sf-option-sub">Date, event, dinner</span>
+            </button>
+            <button class="sf-option" data-step="2" data-val="all">
+              <span class="sf-option-icon">✨</span>
+              <span class="sf-option-label">Sepanjang Hari</span>
+              <span class="sf-option-sub">Setiap saat, setiap momen</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div class="sf-step" id="sf-result">
+          <div class="sf-result-inner">
+            <p class="sf-result-label">Rekomendasi Untukmu</p>
+            <div class="sf-result-product">
+              <div class="sf-result-img">
+                <img id="sf-result-img" src="" alt="" loading="lazy" />
+              </div>
+              <div class="sf-result-text">
+                <p class="sf-result-brand">CRUISER</p>
+                <h3 class="sf-result-name" id="sf-result-name"></h3>
+                <p class="sf-result-dna" id="sf-result-dna"></p>
+                <p class="sf-result-quote" id="sf-result-quote"></p>
+                <div class="sf-result-actions">
+                  <a id="sf-result-detail" href="#" class="sf-btn-detail">Lihat Detail</a>
+                  <a href="https://id.shp.ee/1ftBwTk6" class="sf-btn-shop" target="_blank" rel="noopener">Beli Sekarang</a>
+                </div>
+              </div>
+            </div>
+            <button class="sf-retry" id="sf-retry">Coba Lagi →</button>
+          </div>
+        </div>
+
+        <!-- Progress dots -->
+        <div class="sf-progress" id="sf-progress">
+          <span class="sf-dot active" data-step="1"></span>
+          <span class="sf-dot" data-step="2"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       ETERNITY — DETAIL
+  ═══════════════════════════════════════════ -->
+  <section class="product-detail eternity-section" id="eternity">
+    <div class="detail-color-bg eternity-bg"></div>
+    <div class="container">
+      <div class="detail-inner">
+        <div class="detail-visual reveal-left">
+          <div class="detail-img-wrap">
+            <img src="img/eternity-scene.png" alt="ETERNITY by CRUISER" loading="lazy" />
+            <div class="img-shimmer"></div>
+          </div>
+          <div class="detail-img-secondary">
+            <img src="img/eternity-packaging.png" alt="ETERNITY bottle and box" loading="lazy" />
+          </div>
+        </div>
+        <div class="detail-text reveal-right">
+          <p class="detail-brand">CRUISER</p>
+          <h2 class="detail-name">ETERNITY</h2>
+          <div class="detail-divider"></div>
+          <div class="detail-dna"><span>Fresh</span><span>Sweet</span><span>Addictive</span></div>
+          <blockquote class="detail-tagline">"Freshness That Lingers."</blockquote>
+          <p class="detail-desc">
+            Kesegaran buah seperti pineapple dan apple membuka aroma dengan kesan cerah dan hidup,
+            lalu perlahan berubah menjadi manis hangat dari caramel. Wangi ini tidak hanya segar
+            di awal, tapi meninggalkan jejak yang tahan lama dan berkesan — makanya <em>lingers</em>.
+          </p>
+
+          <!-- Scent Notes Visual -->
+          <div class="scent-notes">
+            <p class="scent-notes-title">Scent Notes</p>
+            <div class="scent-notes-grid">
+              <div class="note-card"><span class="note-icon">🍍</span><span>Pineapple</span></div>
+              <div class="note-card"><span class="note-icon">🍎</span><span>Green Apple</span></div>
+              <div class="note-card"><span class="note-icon">🍋</span><span>Lemon</span></div>
+              <div class="note-card"><span class="note-icon">🟤</span><span>Caramel</span></div>
+              <div class="note-card"><span class="note-icon">🌿</span><span>Bergamot</span></div>
+            </div>
+          </div>
+
+          <div class="detail-specs">
+            <div class="spec"><span class="spec-label">Type</span><span>Extrait De Parfume</span></div>
+            <div class="spec"><span class="spec-label">Volume</span><span>50 ML / 1.70 Fl Oz</span></div>
+          </div>
+          <a href="https://id.shp.ee/1ftBwTk6" class="shop-btn eternity-btn" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+            Beli di Shopee
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       NOCTIS — DETAIL
+  ═══════════════════════════════════════════ -->
+  <section class="product-detail noctis-section" id="noctis">
+    <div class="detail-color-bg noctis-bg"></div>
+    <div class="container">
+      <div class="detail-inner reverse">
+        <div class="detail-text reveal-left">
+          <p class="detail-brand">CRUISER</p>
+          <h2 class="detail-name">NOCTIS</h2>
+          <div class="detail-divider noctis-divider"></div>
+          <div class="detail-dna"><span>Warm</span><span>Sensual</span><span>Deep</span></div>
+          <blockquote class="detail-tagline">"Embrace the Night."</blockquote>
+          <p class="detail-desc">
+            Aroma madu, vanilla, dan cinnamon menciptakan karakter hangat, dalam, dan sensual —
+            seperti suasana malam yang tenang tapi penuh daya tarik. Wangi ini membungkus
+            pemakainya dengan aura misterius dan intim.
+          </p>
+
+          <!-- Scent Notes Visual -->
+          <div class="scent-notes noctis-notes">
+            <p class="scent-notes-title">Scent Notes</p>
+            <div class="scent-notes-grid">
+              <div class="note-card"><span class="note-icon">🍯</span><span>Honey</span></div>
+              <div class="note-card"><span class="note-icon">🌼</span><span>Vanilla</span></div>
+              <div class="note-card"><span class="note-icon">🌿</span><span>Cinnamon</span></div>
+              <div class="note-card"><span class="note-icon">🌸</span><span>Jasmine</span></div>
+              <div class="note-card"><span class="note-icon">✨</span><span>Musk</span></div>
+            </div>
+          </div>
+
+          <div class="detail-specs">
+            <div class="spec"><span class="spec-label">Type</span><span>Extrait De Parfume</span></div>
+            <div class="spec"><span class="spec-label">Volume</span><span>50 ML / 1.70 Fl Oz</span></div>
+          </div>
+          <a href="https://id.shp.ee/1ftBwTk6" class="shop-btn noctis-btn" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+            Beli di Shopee
+          </a>
+        </div>
+        <div class="detail-visual reveal-right">
+          <div class="detail-img-wrap">
+            <img src="img/noctis-splash.png" alt="NOCTIS by CRUISER" loading="lazy" />
+            <div class="img-shimmer"></div>
+          </div>
+          <div class="detail-img-secondary">
+            <img src="img/noctis-packaging.png" alt="NOCTIS packaging" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       LIBEREA — DETAIL
+  ═══════════════════════════════════════════ -->
+  <section class="product-detail liberea-section" id="liberea">
+    <div class="detail-color-bg liberea-bg"></div>
+    <div class="container">
+      <div class="detail-inner">
+        <div class="detail-visual reveal-left">
+          <div class="detail-img-wrap">
+            <img src="img/liberea-splash.png" alt="LIBEREA by CRUISER" loading="lazy" />
+            <div class="img-shimmer"></div>
+          </div>
+          <div class="detail-img-secondary">
+            <img src="img/liberea-packaging.png" alt="LIBEREA bottle and box" loading="lazy" />
+          </div>
+        </div>
+        <div class="detail-text reveal-right">
+          <p class="detail-brand">CRUISER</p>
+          <h2 class="detail-name">LIBEREA</h2>
+          <div class="detail-divider liberea-divider"></div>
+          <div class="detail-dna"><span>Creamy</span><span>Fresh</span><span>Comforting</span></div>
+          <blockquote class="detail-tagline">"Softness in Every Note."</blockquote>
+          <p class="detail-desc">
+            Perpaduan lemon yang ringan dengan vanilla dan butter menciptakan aroma yang lembut,
+            bersih, dan nyaman. Wangi ini terasa seperti kemewahan yang halus — tidak mencolok,
+            tapi sangat berkelas dan menenangkan.
+          </p>
+
+          <!-- Scent Notes Visual -->
+          <div class="scent-notes liberea-notes">
+            <p class="scent-notes-title">Scent Notes</p>
+            <div class="scent-notes-grid">
+              <div class="note-card"><span class="note-icon">🍋</span><span>Lemon</span></div>
+              <div class="note-card"><span class="note-icon">🌼</span><span>Vanilla</span></div>
+              <div class="note-card"><span class="note-icon">🧈</span><span>Butter</span></div>
+              <div class="note-card"><span class="note-icon">🌸</span><span>Pink Pepper</span></div>
+              <div class="note-card"><span class="note-icon">⚪</span><span>White Floral</span></div>
+            </div>
+          </div>
+
+          <div class="detail-specs">
+            <div class="spec"><span class="spec-label">Type</span><span>Extrait De Parfume</span></div>
+            <div class="spec"><span class="spec-label">Volume</span><span>50 ML / 1.70 Fl Oz</span></div>
+          </div>
+          <a href="https://id.shp.ee/1ftBwTk6" class="shop-btn liberea-btn" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+            Beli di Shopee
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BRAND STORY
+  ═══════════════════════════════════════════ -->
+  <section class="story" id="story">
+    <div class="container">
+      <div class="story-inner">
+        <div class="story-text">
+          <p class="section-label reveal-up">Our Story</p>
+          <h2 class="section-title reveal-up" style="transition-delay:.1s">Crafted with Purpose.<br />Worn with Pride.</h2>
+          <p class="story-desc reveal-up" style="transition-delay:.2s">
+            CRUISER lahir dari keyakinan bahwa wewangian adalah bahasa universal —
+            tanpa kata, tanpa batas. Setiap botol adalah karya, setiap aroma adalah cerita.
+          </p>
+          <p class="story-desc reveal-up" style="transition-delay:.3s">
+            Dibuat dengan bahan-bahan premium berkualitas tinggi, koleksi CRUISER menghadirkan
+            pengalaman wewangian kelas dunia yang tahan lama, membekas, dan mencerminkan
+            identitas pemakainya.
+          </p>
+          <div class="story-pillars">
+            <div class="pillar reveal-up" style="transition-delay:.4s">
+              <span class="pillar-num">01</span>
+              <div><p class="pillar-title">Premium Quality</p><p class="pillar-sub">Bahan-bahan terpilih dari seluruh dunia</p></div>
+            </div>
+            <div class="pillar reveal-up" style="transition-delay:.5s">
+              <span class="pillar-num">02</span>
+              <div><p class="pillar-title">Long Lasting</p><p class="pillar-sub">Extrait De Parfume — konsentrasi tertinggi</p></div>
+            </div>
+            <div class="pillar reveal-up" style="transition-delay:.6s">
+              <span class="pillar-num">03</span>
+              <div><p class="pillar-title">Crafted Identity</p><p class="pillar-sub">Setiap aroma mencerminkan karakter unikmu</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="story-visual reveal-right">
+          <div class="story-img-wrap">
+            <img src="img/all-bundle.png" alt="CRUISER Collection" loading="lazy" />
+          </div>
+          <div class="story-badge">
+            <span class="badge-est">est.</span>
+            <span class="badge-year">2026</span>
+            <span class="badge-brand">CRUISER</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TESTIMONIALS
+  ═══════════════════════════════════════════ -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <p class="section-label">Reviews</p>
+        <h2 class="section-title">Yang Mereka Rasakan</h2>
+        <p class="section-sub">Ribuan pelanggan puas di seluruh Indonesia</p>
+        <div class="section-ornament"><span></span><span>◆</span><span></span></div>
+      </div>
+
+      <div class="testi-grid">
+        <div class="testi-card reveal-up">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Wangi ETERNITY beneran tahan lama, dari pagi sampai sore masih kerasa. Banyak yang nanya parfum apa, worth it banget!"</p>
+          <div class="testi-footer">
+            <div class="testi-avatar">R</div>
+            <div>
+              <p class="testi-name">Rina A.</p>
+              <p class="testi-product">CRUISER — ETERNITY</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card reveal-up" style="transition-delay:.12s">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"NOCTIS jadi andalan buat date night. Aromanya dalam banget, sensual, dan beda dari parfum lain yang pernah aku coba."</p>
+          <div class="testi-footer">
+            <div class="testi-avatar">D</div>
+            <div>
+              <p class="testi-name">Dika R.</p>
+              <p class="testi-product">CRUISER — NOCTIS</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card reveal-up" style="transition-delay:.24s">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"LIBEREA tuh kalem tapi mewah banget. Cocok buat kerja sehari-hari, nggak overwhelming tapi tetap keliatan berkelas."</p>
+          <div class="testi-footer">
+            <div class="testi-avatar">S</div>
+            <div>
+              <p class="testi-name">Sari W.</p>
+              <p class="testi-product">CRUISER — LIBEREA</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card reveal-up" style="transition-delay:.36s">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Packaging elegan, wangi premium, harga terjangkau. Sudah beli 3x dan sudah belikan ke beberapa teman juga. Top!"</p>
+          <div class="testi-footer">
+            <div class="testi-avatar">M</div>
+            <div>
+              <p class="testi-name">Mega P.</p>
+              <p class="testi-product">CRUISER — Mix Bundle</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="trust-badges reveal-up">
+        <div class="trust-item">
+          <span class="trust-num">5000+</span>
+          <span class="trust-label">Pembeli Puas</span>
+        </div>
+        <div class="trust-divider">◆</div>
+        <div class="trust-item">
+          <span class="trust-num">4.9 ★</span>
+          <span class="trust-label">Rating Shopee</span>
+        </div>
+        <div class="trust-divider">◆</div>
+        <div class="trust-item">
+          <span class="trust-num">100%</span>
+          <span class="trust-label">Produk Original</span>
+        </div>
+        <div class="trust-divider">◆</div>
+        <div class="trust-item">
+          <span class="trust-num">COD</span>
+          <span class="trust-label">Tersedia</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SHOP
+  ═══════════════════════════════════════════ -->
+  <section class="shop" id="shop">
+    <div class="shop-bg-img"><img src="img/hero-triptych.png" alt="" loading="lazy" /></div>
+    <div class="shop-overlay"></div>
+    <div class="container">
+      <div class="section-header reveal-up">
+        <p class="section-label">Shop Now</p>
+        <h2 class="section-title">Find Your Signature Scent</h2>
+        <p class="section-sub">Tersedia di Shopee · Pengiriman ke seluruh Indonesia</p>
+        <div class="section-ornament"><span></span><span>◆</span><span></span></div>
+      </div>
+
+      <div class="shop-grid">
+        <div class="shop-card reveal-up">
+          <div class="shop-card-img">
+            <img src="img/eternity-bottles.png" alt="ETERNITY" loading="lazy" />
+            <div class="shop-card-badge">50 ML Only</div>
+          </div>
+          <div class="shop-card-body">
+            <p class="shop-card-dna">Fresh · Sweet · Addictive</p>
+            <h3 class="shop-card-name">ETERNITY</h3>
+            <p class="shop-card-tag">"Freshness That Lingers."</p>
+            <div class="shop-card-stock"><span class="stock-dot"></span> Stok Tersedia</div>
+            <a href="https://id.shp.ee/1ftBwTk6" class="shop-card-btn eternity-shop-btn" target="_blank" rel="noopener">Beli Sekarang</a>
+          </div>
+        </div>
+
+        <div class="shop-card featured-shop reveal-up" style="transition-delay:.15s">
+          <div class="shop-card-img">
+            <img src="img/noctis-bottles.png" alt="NOCTIS" loading="lazy" />
+            <div class="shop-card-badge bestseller-badge">Bestseller ◆</div>
+          </div>
+          <div class="shop-card-body">
+            <p class="shop-card-dna">Warm · Sensual · Deep</p>
+            <h3 class="shop-card-name">NOCTIS</h3>
+            <p class="shop-card-tag">"Embrace the Night."</p>
+            <div class="shop-card-stock"><span class="stock-dot stock-low"></span> Stok Terbatas!</div>
+            <a href="https://id.shp.ee/1ftBwTk6" class="shop-card-btn noctis-shop-btn" target="_blank" rel="noopener">Beli Sekarang</a>
+          </div>
+        </div>
+
+        <div class="shop-card reveal-up" style="transition-delay:.3s">
+          <div class="shop-card-img">
+            <img src="img/liberea-bottles.png" alt="LIBEREA" loading="lazy" />
+            <div class="shop-card-badge">50 ML Only</div>
+          </div>
+          <div class="shop-card-body">
+            <p class="shop-card-dna">Creamy · Fresh · Comforting</p>
+            <h3 class="shop-card-name">LIBEREA</h3>
+            <p class="shop-card-tag">"Softness in Every Note."</p>
+            <div class="shop-card-stock"><span class="stock-dot"></span> Stok Tersedia</div>
+            <a href="https://id.shp.ee/1ftBwTk6" class="shop-card-btn liberea-shop-btn" target="_blank" rel="noopener">Beli Sekarang</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="bundle-cta reveal-up">
+        <div class="bundle-badge">Limited Edition</div>
+        <p class="bundle-sub">Ingin ketiganya sekaligus?</p>
+        <h3 class="bundle-title">Mix Bundle — The Cruiser Collective</h3>
+        <p class="bundle-desc">Tiga aroma signature dalam satu paket eksklusif. Tersedia untuk waktu terbatas.</p>
+        <a href="https://id.shp.ee/1ftBwTk6" class="bundle-btn" target="_blank" rel="noopener">Shop Mix Bundle di Shopee</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3 class="footer-logo">CRUISER</h3>
+          <p class="footer-tagline">"Luxury in Every Note."</p>
+          <p class="footer-meta">Extrait De Parfume &nbsp;·&nbsp; est. 2026</p>
+          <p class="footer-meta">Premium Quality Ingredients &nbsp;·&nbsp; Long Lasting Fragrance</p>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Collection</p>
+          <a href="#eternity" class="footer-link">Eternity</a>
+          <a href="#noctis" class="footer-link">Noctis</a>
+          <a href="#liberea" class="footer-link">Liberea</a>
+          <a href="#shop" class="footer-link">Mix Bundle</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Explore</p>
+          <a href="#scent-finder" class="footer-link">Find Your Scent</a>
+          <a href="#story" class="footer-link">Our Story</a>
+          <a href="#testimonials" class="footer-link">Reviews</a>
+          <a href="#shop" class="footer-link">Shop</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Follow Us</p>
+          <a href="https://www.instagram.com/cruiser.official?igsh=MXdua2I4aDNubDBtMg%3D%3D&utm_source=qr" target="_blank" rel="noopener" class="footer-ig-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            @cruiser.official
+          </a>
+          <p class="footer-col-title" style="margin-top:20px">Shop</p>
+          <a href="https://id.shp.ee/1ftBwTk6" target="_blank" rel="noopener" class="footer-link">Cruiser Official Store</a>
+          <span class="footer-link footer-shop-tag">Tersedia di Shopee</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 CRUISER. All rights reserved.</p>
+        <p class="footer-bottom-tag">Crafted Your Identity.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════
+       FLOATING SHOPEE BUTTON
+  ═══════════════════════════════════════════ -->
+  <a href="https://id.shp.ee/1ftBwTk6" class="float-btn" id="floatBtn" target="_blank" rel="noopener" aria-label="Beli di Shopee">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 01-8 0"></path>
+    </svg>
+    <span>Beli di Shopee</span>
+  </a>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
