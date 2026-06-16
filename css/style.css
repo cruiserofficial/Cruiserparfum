@@ -835,9 +835,7 @@ ul  { list-style: none; }
 .detail-img-secondary img {
   width: 100%;
   height: auto;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  object-position: center 25%;
+  display: block;
   transition: transform 1s var(--ease-luxury);
 }
 
@@ -2474,5 +2472,18 @@ ul  { list-style: none; }
     width: 100%;
     text-align: center;
     display: block;
+  }
+}
+
+/* ── Detail image full (tidak terpotong) di mobile ── */
+@media (max-width: 600px) {
+  .detail-img-wrap img {
+    aspect-ratio: unset;
+    object-fit: contain;
+    object-position: center center;
+    height: auto;
+  }
+  .detail-img-wrap::after {
+    height: 40%;
   }
 }
