@@ -235,7 +235,7 @@ export default function AdminOrdersPage() {
         {filtered.map((order) => {
           const s = STATUS_OPTIONS.find((x) => x.value === order.status) ?? STATUS_OPTIONS[0]
           return (
-            <div key={order.id} className="glass p-4 hover:border-white/10 transition-colors">
+            <div key={order.id} className="glass p-4 hover:border-white/10 transition-colors relative hover:z-10">
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="min-w-0">
                   <div className="flex items-center gap-3 flex-wrap mb-1">
@@ -349,9 +349,9 @@ export default function AdminOrdersPage() {
                   onChange={(e) => setCourierInput(e.target.value)}
                   className="w-full bg-white/[0.04] border border-white/10 focus:border-gold/50 outline-none px-3 py-2.5 font-sans text-sm text-cream"
                 >
-                  <option value="">-- Pilih Kurir --</option>
+                  <option value="" className="bg-obsidian-3">-- Pilih Kurir --</option>
                   {['JNE REG', 'JNE YES', 'J&T EZ', 'SiCepat BEST', 'SiCepat Same Day', 'AnterAja REG', 'Pos Indonesia', 'TIKI REG'].map((k) => (
-                    <option key={k} value={k}>{k}</option>
+                    <option key={k} value={k} className="bg-obsidian-3">{k}</option>
                   ))}
                 </select>
                 {courierInput === '' && (

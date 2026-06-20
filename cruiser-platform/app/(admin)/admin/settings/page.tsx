@@ -273,9 +273,9 @@ export default function SettingsPage() {
                   onChange={(e) => setNewBank((p) => ({ ...p, bankName: e.target.value }))}
                   className="input-luxury w-full text-sm"
                 >
-                  <option value="">Pilih bank</option>
+                  <option value="" className="bg-obsidian-3">Pilih bank</option>
                   {['BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB Niaga', 'Permata', 'BSI', 'Jenius (SMBC)', 'SeaBank', 'GoPay', 'OVO', 'DANA'].map((b) => (
-                    <option key={b} value={b}>{b}</option>
+                    <option key={b} value={b} className="bg-obsidian-3">{b}</option>
                   ))}
                 </select>
               </div>

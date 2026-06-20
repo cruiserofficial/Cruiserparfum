@@ -329,9 +329,9 @@ export default function ProductEditPage() {
             onChange={(e) => setNewNote((p) => ({ ...p, type: e.target.value as 'top' | 'heart' | 'base' }))}
             className="input-luxury text-sm"
           >
-            <option value="top">Top</option>
-            <option value="heart">Heart</option>
-            <option value="base">Base</option>
+            <option value="top" className="bg-obsidian-3">Top</option>
+            <option value="heart" className="bg-obsidian-3">Heart</option>
+            <option value="base" className="bg-obsidian-3">Base</option>
           </select>
           <button onClick={addNote} className="btn-luxury px-3 py-2 text-xs">
             <Plus size={13} />

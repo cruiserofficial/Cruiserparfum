@@ -162,9 +162,9 @@ export default function CouponsPage() {
                 onChange={(e) => setForm((p) => ({ ...p, type: e.target.value as CouponType }))}
                 className="input-luxury w-full text-sm"
               >
-                <option value="percentage">Persentase (%)</option>
-                <option value="fixed">Nominal Tetap (Rp)</option>
-                <option value="free_shipping">Gratis Ongkir</option>
+                <option value="percentage" className="bg-obsidian-3">Persentase (%)</option>
+                <option value="fixed" className="bg-obsidian-3">Nominal Tetap (Rp)</option>
+                <option value="free_shipping" className="bg-obsidian-3">Gratis Ongkir</option>
               </select>
             </div>
             {form.type !== 'free_shipping' && (

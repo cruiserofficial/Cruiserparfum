@@ -265,9 +265,9 @@ export default function NewProductPage() {
           <input type="text" value={newNote.icon} onChange={(e) => setNewNote((p) => ({ ...p, icon: e.target.value }))} placeholder="🌸" className="input-luxury w-14 text-center text-sm" />
           <input type="text" value={newNote.name} onChange={(e) => setNewNote((p) => ({ ...p, name: e.target.value }))} onKeyDown={(e) => e.key === 'Enter' && addNote()} placeholder="Nama note (mis. Rose)" className="input-luxury flex-1 text-sm" />
           <select value={newNote.type} onChange={(e) => setNewNote((p) => ({ ...p, type: e.target.value as NoteType }))} className="input-luxury text-sm">
-            <option value="top">Top</option>
-            <option value="heart">Heart</option>
-            <option value="base">Base</option>
+            <option value="top" className="bg-obsidian-3">Top</option>
+            <option value="heart" className="bg-obsidian-3">Heart</option>
+            <option value="base" className="bg-obsidian-3">Base</option>
           </select>
           <button onClick={addNote} className="btn-luxury px-3 py-2 text-xs"><Plus size={13} /></button>
         </div>
