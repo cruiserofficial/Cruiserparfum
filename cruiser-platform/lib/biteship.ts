@@ -52,7 +52,10 @@ export async function searchAreas(keyword: string): Promise<BiteshipArea[]> {
   const data = await biteshipFetch(
     `/v1/maps/areas?countries=ID&input=${encodeURIComponent(keyword)}&type=single`,
   )
-  return data.areas ?? []
+  const areas = (data.areas ?? []) as BiteshipArea[]
+  // Biteship returns postal_code as a number despite our string type — normalize
+  // so every consumer (and any z.string() validation downstream) sees a string.
+  return areas.map((area) => ({ ...area, postal_code: String(area.postal_code) }))
 }
 
 export interface RatesParams {
