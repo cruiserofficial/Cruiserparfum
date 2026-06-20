@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Instagram, Mail, MessageCircle } from 'lucide-react'
@@ -29,6 +30,17 @@ const LEGAL_LINKS = [
 
 export function Footer() {
   const pathname = usePathname()
+  const [shopeeUrl, setShopeeUrl] = useState<string>(SITE.shopee)
+
+  useEffect(() => {
+    fetch('/api/site-status')
+      .then((res) => res.json())
+      .then((data: { shopee?: string | null }) => {
+        if (data.shopee) setShopeeUrl(data.shopee)
+      })
+      .catch(() => {})
+  }, [])
+
   if (pathname.startsWith('/admin')) return null
 
   return (
@@ -181,7 +193,7 @@ export function Footer() {
               <div className="pt-2">
                 <p className="text-cream/30 mb-1">Also available at</p>
                 <a
-                  href={SITE.shopee}
+                  href={shopeeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-cream transition-colors"

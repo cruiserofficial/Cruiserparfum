@@ -45,12 +45,17 @@ export default function SettingsPage() {
       const { settings } = await res.json()
 
       if (settings.store_info) {
-        const info = settings.store_info as { phone?: string; instagram?: string }
+        const info = settings.store_info as { phone?: string; instagram?: string; shopee?: string }
         setGeneral((prev) => ({
           ...prev,
           whatsapp: info.phone ?? '',
           instagram: info.instagram ? `https://instagram.com/${info.instagram}` : prev.instagram,
+          shopee: info.shopee ?? '',
         }))
+      }
+      if (settings.maintenance_mode) {
+        const maint = settings.maintenance_mode as { enabled?: boolean }
+        setGeneral((prev) => ({ ...prev, maintenanceMode: maint.enabled === true }))
       }
       if (settings.payment_methods) {
         const pm = settings.payment_methods as { midtrans?: boolean; qris?: boolean; bankTransfer?: boolean; cod?: boolean }
@@ -96,7 +101,9 @@ export default function SettingsPage() {
       phone: general.whatsapp,
       address: '',
       instagram: general.instagram.replace('https://instagram.com/', ''),
+      shopee: general.shopee,
     })
+    await saveToDb('maintenance_mode', { enabled: general.maintenanceMode })
     toast.success('Pengaturan umum disimpan')
   }
 
