@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 38 33% 94%;
+    --card: 0 0% 5%;
+    --card-foreground: 38 33% 94%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 38 33% 94%;
+    --primary: 42 54% 54%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 11%;
+    --secondary-foreground: 38 33% 94%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 38 10% 55%;
+    --accent: 0 0% 11%;
+    --accent-foreground: 38 33% 94%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 38 33% 94%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 42 54% 54%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-obsidian text-cream font-serif overflow-x-hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201, 168, 76, 0.04) 0%, transparent 60%);
+  }
+
+  ::selection {
+    background: rgba(201, 168, 76, 0.3);
+    color: #F5F0E8;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #080808;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(201, 168, 76, 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(201, 168, 76, 0.5);
+  }
+}
+
+@layer components {
+  /* ── Gold label badge ─────────────────────────────────────────── */
+  .label-gold {
+    @apply inline-flex items-center gap-3 font-sans text-xs font-semibold tracking-[0.44em] uppercase text-gold border border-gold/30 px-5 py-2 relative;
+  }
+
+  .label-gold::before,
+  .label-gold::after {
+    content: '';
+    @apply absolute w-1.5 h-1.5 border-gold border-solid opacity-70;
+  }
+
+  .label-gold::before {
+    @apply top-0 left-0;
+    border-width: 1px 0 0 1px;
+  }
+
+  .label-gold::after {
+    @apply bottom-0 right-0;
+    border-width: 0 1px 1px 0;
+  }
+
+  /* ── Glassmorphism card ──────────────────────────────────────── */
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-md border border-white/[0.06];
+  }
+
+  .glass-gold {
+    @apply bg-gold/[0.05] backdrop-blur-md border border-gold/20;
+  }
+
+  /* ── Gold shimmer text ───────────────────────────────────────── */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #C9A84C 0%, #E8C96A 40%, #C9A84C 80%, #A07830 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Luxury button ───────────────────────────────────────────── */
+  .btn-luxury {
+    @apply relative inline-flex items-center justify-center gap-2 font-sans text-xs font-semibold tracking-[0.22em] uppercase
+           px-8 py-4 overflow-hidden transition-all duration-500;
+    background: linear-gradient(135deg, #C9A84C 0%, #E8C96A 50%, #C9A84C 100%);
+    background-size: 200% auto;
+    color: #080808;
+  }
+
+  .btn-luxury:hover {
+    background-position: right center;
+    box-shadow: 0 0 30px rgba(201, 168, 76, 0.4);
+  }
+
+  .btn-luxury-outline {
+    @apply relative inline-flex items-center justify-center gap-2 font-sans text-xs font-semibold tracking-[0.22em] uppercase
+           px-8 py-4 border border-gold/60 text-gold overflow-hidden transition-all duration-500;
+  }
+
+  .btn-luxury-outline:hover {
+    @apply bg-gold text-obsidian border-gold;
+    box-shadow: 0 0 30px rgba(201, 168, 76, 0.3);
+  }
+
+  /* ── Section ornament ────────────────────────────────────────── */
+  .ornament {
+    @apply flex items-center gap-4 my-6;
+  }
+
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    @apply flex-1 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent;
+  }
+
+  /* ── Product card ────────────────────────────────────────────── */
+  .product-card-hover {
+    @apply transition-all duration-700 ease-out hover:-translate-y-2;
+  }
+
+  /* ── Input luxury ────────────────────────────────────────────── */
+  .input-luxury {
+    @apply w-full bg-obsidian-3 border border-white/10 text-cream placeholder-cream/30
+           px-4 py-3 font-sans text-sm focus:outline-none focus:border-gold/50 transition-colors duration-300;
+  }
+
+  /* ── Star rating ─────────────────────────────────────────────── */
+  .star-filled {
+    color: #C9A84C;
+  }
+
+  .star-empty {
+    color: rgba(201, 168, 76, 0.25);
+  }
+}
+
+/* ── Framer Motion reduced motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

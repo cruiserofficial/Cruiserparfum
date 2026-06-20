@@ -1,0 +1,18 @@
+name = "cruiser-parfum"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/assets"
+
+[vars]
+ENVIRONMENT = "production"
+NEXT_PUBLIC_APP_URL = "https://cruiser-parfum.pages.dev"
+AUTH_SECRET = "cruiser-placeholder-secret-for-visual-check-only"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cruiser-db"
+database_id = "883c5256-76b3-4de2-96ed-986e02cebf6d"
+
+[dev]
+local_protocol = "http"
+port = 8788
