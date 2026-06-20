@@ -1,9 +1,71 @@
 import type { Metadata } from 'next'
-import { BarChart3, TrendingUp, ShoppingCart, DollarSign, Package } from 'lucide-react'
+import { TrendingUp, ShoppingCart, DollarSign, Package } from 'lucide-react'
+import { getDb } from '@/lib/db/index'
+import { orders, orderItems } from '@/lib/db/schema'
+import { and, gte, isNotNull, sql } from 'drizzle-orm'
+import { formatPrice } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Analytics — Admin' }
+export const dynamic = 'force-dynamic'
 
-export default function AnalyticsPage() {
+async function getAnalytics() {
+  try {
+    const db = await getDb()
+    const monthStart = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString()
+
+    const [totalRevenueRow] = await db
+      .select({ total: sql<number>`coalesce(sum(${orders.total}), 0)` })
+      .from(orders)
+      .where(isNotNull(orders.paymentConfirmedAt))
+
+    const [totalOrdersRow] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(orders)
+
+    const [monthRevenueRow] = await db
+      .select({ total: sql<number>`coalesce(sum(${orders.total}), 0)` })
+      .from(orders)
+      .where(and(isNotNull(orders.paymentConfirmedAt), gte(orders.createdAt, monthStart)))
+
+    const [monthOrdersRow] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(orders)
+      .where(gte(orders.createdAt, monthStart))
+
+    const productBreakdown = await db
+      .select({
+        name: orderItems.name,
+        sold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`,
+      })
+      .from(orderItems)
+      .innerJoin(orders, sql`${orderItems.orderId} = ${orders.id}`)
+      .where(isNotNull(orders.paymentConfirmedAt))
+      .groupBy(orderItems.name)
+
+    return {
+      totalRevenue: totalRevenueRow?.total ?? 0,
+      totalOrders: totalOrdersRow?.count ?? 0,
+      monthRevenue: monthRevenueRow?.total ?? 0,
+      monthOrders: monthOrdersRow?.count ?? 0,
+      productBreakdown,
+    }
+  } catch (e) {
+    console.error('Analytics data error:', e)
+    return { totalRevenue: 0, totalOrders: 0, monthRevenue: 0, monthOrders: 0, productBreakdown: [] }
+  }
+}
+
+export default async function AnalyticsPage() {
+  const data = await getAnalytics()
+  const maxSold = Math.max(1, ...data.productBreakdown.map((p) => p.sold))
+
+  const kpis = [
+    { label: 'Revenue Bulan Ini', value: formatPrice(data.monthRevenue), icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10' },
+    { label: 'Orders Bulan Ini', value: String(data.monthOrders), icon: ShoppingCart, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+    { label: 'Total Revenue', value: formatPrice(data.totalRevenue), icon: TrendingUp, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+    { label: 'Total Orders', value: String(data.totalOrders), icon: Package, color: 'text-purple-400', bg: 'bg-purple-400/10' },
+  ]
+
   return (
     <div className="space-y-6">
       <div>
@@ -11,14 +73,8 @@ export default function AnalyticsPage() {
         <p className="font-sans text-xs text-cream/40 mt-1">Performa penjualan toko CRUISER</p>
       </div>
 
-      {/* KPI Cards — all zero */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        {[
-          { label: 'Revenue Bulan Ini', value: 'Rp 0', icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10' },
-          { label: 'Orders Bulan Ini', value: '0', icon: ShoppingCart, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
-          { label: 'Total Revenue', value: 'Rp 0', icon: TrendingUp, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-          { label: 'Total Orders', value: '0', icon: Package, color: 'text-purple-400', bg: 'bg-purple-400/10' },
-        ].map((kpi) => {
+        {kpis.map((kpi) => {
           const Icon = kpi.icon
           return (
             <div key={kpi.label} className="glass p-5">
@@ -32,35 +88,34 @@ export default function AnalyticsPage() {
         })}
       </div>
 
-      {/* Empty chart area */}
       <div className="glass p-6">
-        <h2 className="font-sans text-xs tracking-widest uppercase text-gold/70 mb-6">Revenue Bulanan</h2>
-        <div className="flex flex-col items-center justify-center h-48 text-center">
-          <BarChart3 size={40} className="text-cream/10 mb-4" />
-          <p className="font-sans text-sm text-cream/25">Belum ada data penjualan</p>
-          <p className="font-sans text-xs text-cream/15 mt-1">
-            Grafik akan muncul otomatis saat ada pesanan yang masuk
-          </p>
-        </div>
+        <h2 className="font-sans text-xs tracking-widest uppercase text-gold/70 mb-2">Catatan Revenue</h2>
+        <p className="font-sans text-xs text-cream/40">
+          Revenue dihitung dari pesanan yang pembayarannya sudah dikonfirmasi admin (klik &quot;Proses&quot; di halaman Pesanan).
+        </p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Product breakdown */}
         <div className="glass p-6">
           <h2 className="font-sans text-xs tracking-widest uppercase text-gold/70 mb-5">Produk Terlaris</h2>
-          <div className="space-y-4">
-            {['Eternity', 'Noctis', 'Liberea'].map((name) => (
-              <div key={name}>
-                <div className="flex justify-between mb-1.5">
-                  <span className="font-sans text-xs text-cream/60">{name}</span>
-                  <span className="font-sans text-xs text-cream/30">0 terjual</span>
+          {data.productBreakdown.length === 0 ? (
+            <p className="font-sans text-sm text-cream/25 text-center py-6">Belum ada data penjualan</p>
+          ) : (
+            <div className="space-y-4">
+              {data.productBreakdown.map((p) => (
+                <div key={p.name}>
+                  <div className="flex justify-between mb-1.5">
+                    <span className="font-sans text-xs text-cream/60">{p.name}</span>
+                    <span className="font-sans text-xs text-cream/30">{p.sold} terjual</span>
+                  </div>
+                  <div className="h-1.5 bg-white/[0.04] overflow-hidden">
+                    <div className="h-full bg-gold/40" style={{ width: `${(p.sold / maxSold) * 100}%` }} />
+                  </div>
                 </div>
-                <div className="h-1.5 bg-white/[0.04] overflow-hidden">
-                  <div className="h-full w-0 bg-gold/40" />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Traffic source */}

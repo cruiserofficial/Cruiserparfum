@@ -9,6 +9,7 @@ const updateOrderSchema = z.object({
   status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
   trackingNumber: z.string().nullable().optional(),
   courier: z.string().nullable().optional(),
+  confirmPayment: z.boolean().optional(), // admin clicked "Proses" — counts order into Total Revenue
 })
 
 interface RouteParams {
@@ -37,6 +38,11 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     // Auto-set status to shipped when tracking is added
     if (data.trackingNumber && !data.status) {
       updateData.status = 'shipped'
+    }
+
+    if (data.confirmPayment) {
+      updateData.paymentConfirmedAt = now
+      if (!data.status) updateData.status = 'processing'
     }
 
     await db.update(orders).set(updateData).where(eq(orders.number, orderNumber))

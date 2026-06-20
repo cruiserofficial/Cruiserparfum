@@ -64,6 +64,9 @@ export const orders = sqliteTable('orders', {
   trackingNumber: text('tracking_number'),
   isGuest: integer('is_guest', { mode: 'boolean' }).notNull().default(false),
   userId: text('user_id'),
+  paymentProofUrl: text('payment_proof_url'), // base64 image of bank transfer proof, set by customer
+  paymentConfirmedAt: text('payment_confirmed_at'), // set when admin clicks "Proses" — gates Total Revenue
+  customerConfirmedAt: text('customer_confirmed_at'), // set when customer clicks "Pesanan Diterima" — unlocks review
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 })
@@ -95,4 +98,17 @@ export const adminSettings = sqliteTable('admin_settings', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
   updatedAt: text('updated_at').notNull(),
+})
+
+export const reviews = sqliteTable('reviews', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  productId: text('product_id').notNull(),
+  userId: text('user_id').notNull(),
+  customerName: text('customer_name').notNull(),
+  rating: integer('rating').notNull(),
+  title: text('title'),
+  body: text('body').notNull(),
+  isVisible: integer('is_visible', { mode: 'boolean' }).notNull().default(true),
+  createdAt: text('created_at').notNull(),
 })

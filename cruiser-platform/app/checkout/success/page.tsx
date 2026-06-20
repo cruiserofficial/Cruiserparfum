@@ -1,11 +1,18 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { CheckCircle2, Package, ArrowRight, Copy } from 'lucide-react'
+import { CheckCircle2, Package, ArrowRight, Copy, Upload } from 'lucide-react'
 import { SITE } from '@/lib/constants'
 import toast from 'react-hot-toast'
+
+interface BankAccount {
+  id: string
+  bankName: string
+  accountNumber: string
+  accountName: string
+}
 
 const PAYMENT_INSTRUCTIONS: Record<string, { title: string; steps: string[] }> = {
   qris: {
@@ -21,10 +28,10 @@ const PAYMENT_INSTRUCTIONS: Record<string, { title: string; steps: string[] }> =
   bank_transfer: {
     title: 'Instruksi Transfer Bank',
     steps: [
-      'Transfer ke rekening CRUISER (lihat di halaman Pembayaran)',
+      'Transfer ke salah satu rekening di bawah sesuai total pesanan',
       'Gunakan nomor pesanan sebagai berita / keterangan transfer',
-      'Screenshot bukti transfer dan kirim ke WhatsApp kami',
-      'Pesanan akan diproses setelah pembayaran dikonfirmasi',
+      'Klik "Selesaikan Pembayaran" di bawah dan unggah bukti transfer',
+      'Pesanan akan diproses setelah pembayaran dikonfirmasi admin',
     ],
   },
   cod: {
@@ -52,9 +59,55 @@ function SuccessContent() {
 
   const instructions = PAYMENT_INSTRUCTIONS[method] ?? PAYMENT_INSTRUCTIONS.qris
 
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([])
+  const [proofUploaded, setProofUploaded] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (method !== 'bank_transfer') return
+    fetch('/api/site-status')
+      .then((res) => res.json())
+      .then((data: { bankAccounts?: BankAccount[] }) => setBankAccounts(data.bankAccounts ?? []))
+      .catch(() => {})
+  }, [method])
+
   function copyOrderNumber() {
     navigator.clipboard.writeText(orderNumber)
     toast.success('Nomor pesanan disalin!')
+  }
+
+  function copyAccountNumber(num: string) {
+    navigator.clipboard.writeText(num)
+    toast.success('Nomor rekening disalin!')
+  }
+
+  function handleProofFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || orderNumber === '—') return
+    if (!file.type.startsWith('image/')) { toast.error('File harus berupa gambar'); return }
+    if (file.size > 3 * 1024 * 1024) { toast.error('Ukuran gambar maks. 3MB'); return }
+
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      const imageBase64 = ev.target?.result as string
+      setUploading(true)
+      try {
+        const res = await fetch(`/api/orders/${orderNumber}/payment-proof`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64 }),
+        })
+        if (!res.ok) throw new Error('Failed')
+        setProofUploaded(true)
+        toast.success('Bukti transfer terkirim! Tunggu konfirmasi admin.')
+      } catch {
+        toast.error('Gagal mengirim bukti transfer')
+      } finally {
+        setUploading(false)
+      }
+    }
+    reader.readAsDataURL(file)
   }
 
   return (
@@ -110,6 +163,55 @@ function SuccessContent() {
                 </li>
               ))}
             </ol>
+          </div>
+        )}
+
+        {/* Bank accounts + upload proof */}
+        {method === 'bank_transfer' && (
+          <div className="border border-white/[0.08] bg-white/[0.02] p-5 mb-6">
+            <h2 className="font-sans text-xs tracking-widest uppercase text-cream/50 mb-4">Rekening Tujuan Transfer</h2>
+            {bankAccounts.length === 0 ? (
+              <p className="font-sans text-xs text-cream/30">Belum ada rekening terdaftar. Hubungi kami via WhatsApp.</p>
+            ) : (
+              <div className="space-y-3 mb-5">
+                {bankAccounts.map((acc) => (
+                  <div key={acc.id} className="flex items-center justify-between bg-white/[0.03] border border-white/[0.06] px-4 py-3">
+                    <div>
+                      <p className="font-sans text-sm text-cream">{acc.bankName}</p>
+                      <p className="font-mono text-sm text-gold/80">{acc.accountNumber}</p>
+                      <p className="font-sans text-xs text-cream/40">a.n. {acc.accountName}</p>
+                    </div>
+                    <button
+                      onClick={() => copyAccountNumber(acc.accountNumber)}
+                      className="text-cream/30 hover:text-gold transition-colors"
+                      title="Salin nomor rekening"
+                    >
+                      <Copy size={15} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {proofUploaded ? (
+              <p className="font-sans text-xs text-emerald-400/80 text-center">✓ Bukti transfer terkirim, menunggu konfirmasi admin</p>
+            ) : (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="btn-luxury w-full py-3 flex items-center justify-center gap-2 text-sm tracking-widest disabled:opacity-60"
+              >
+                <Upload size={14} />
+                {uploading ? 'Mengirim...' : 'Selesaikan Pembayaran — Unggah Bukti'}
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleProofFileChange}
+              className="hidden"
+            />
           </div>
         )}
 

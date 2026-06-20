@@ -38,6 +38,9 @@ interface Order {
   trackingNumber?: string | null
   isGuest: boolean
   userId?: string | null
+  paymentProofUrl?: string | null
+  paymentConfirmedAt?: string | null
+  customerConfirmedAt?: string | null
   createdAt: string
   updatedAt: string
   items: OrderItem[]
@@ -131,6 +134,43 @@ export default function AdminOrdersPage() {
       setSelectedOrder(null)
     } catch {
       toast.error('Gagal menyimpan resi')
+    }
+  }
+
+  async function handleConfirmPayment(order: Order) {
+    try {
+      const res = await fetch(`/api/admin/orders/${order.number}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmPayment: true }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const now = new Date().toISOString()
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.number === order.number
+            ? { ...o, paymentConfirmedAt: now, status: o.status === 'pending' ? 'processing' : o.status }
+            : o
+        )
+      )
+      toast.success(`Pembayaran ${order.number} dikonfirmasi — masuk Total Revenue`)
+    } catch {
+      toast.error('Gagal konfirmasi pembayaran')
+    }
+  }
+
+  async function handleMarkDelivered(order: Order) {
+    try {
+      const res = await fetch(`/api/admin/orders/${order.number}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'delivered' }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      setOrders((prev) => prev.map((o) => o.number === order.number ? { ...o, status: 'delivered' } : o))
+      toast.success(`${order.number} ditandai selesai`)
+    } catch {
+      toast.error('Gagal menandai selesai')
     }
   }
 
@@ -268,9 +308,45 @@ export default function AdminOrdersPage() {
                       <span className="font-sans text-[10px] text-cream/20">({order.courier})</span>
                     </div>
                   )}
+                  {order.paymentMethod === 'bank_transfer' && order.paymentProofUrl && (
+                    <a
+                      href={order.paymentProofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-1.5 font-sans text-[10px] text-blue-400/80 hover:text-blue-400"
+                    >
+                      <ExternalLink size={9} /> Lihat bukti transfer
+                    </a>
+                  )}
+                  {order.paymentMethod === 'bank_transfer' && !order.paymentProofUrl && !order.paymentConfirmedAt && (
+                    <p className="font-sans text-[10px] text-amber-400/70 mt-1.5">Menunggu bukti transfer dari pelanggan</p>
+                  )}
+                  {order.customerConfirmedAt && (
+                    <p className="font-sans text-[10px] text-emerald-400/70 mt-1.5">✓ Pelanggan sudah konfirmasi pesanan diterima</p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
+                  {!order.paymentConfirmedAt && (
+                    <button
+                      onClick={() => handleConfirmPayment(order)}
+                      className="flex items-center gap-1.5 font-sans text-[10px] tracking-widest uppercase text-emerald-400/80 hover:text-emerald-400 border border-emerald-400/30 hover:border-emerald-400/60 px-3 py-2 transition-all"
+                    >
+                      <CheckCircle2 size={12} />
+                      Proses
+                    </button>
+                  )}
+
+                  {order.status === 'shipped' && (
+                    <button
+                      onClick={() => handleMarkDelivered(order)}
+                      className="flex items-center gap-1.5 font-sans text-[10px] tracking-widest uppercase text-gold/80 hover:text-gold border border-gold/30 hover:border-gold/60 px-3 py-2 transition-all"
+                    >
+                      <CheckCircle2 size={12} />
+                      Selesai
+                    </button>
+                  )}
+
                   {/* Status dropdown */}
                   <div className="relative group">
                     <button className="flex items-center gap-1.5 font-sans text-[10px] text-cream/40 hover:text-cream border border-white/10 hover:border-white/20 px-3 py-2 transition-all">
