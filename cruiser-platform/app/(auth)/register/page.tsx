@@ -17,6 +17,7 @@ function RegisterForm() {
 
   const [step, setStep] = useState<1 | 2>(1)
   const [loading, setLoading] = useState(false)
+  const [checkingEmail, setCheckingEmail] = useState(false)
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -58,12 +59,26 @@ function RegisterForm() {
   }
 
   // Step 1 → Step 2
-  function handleStep1(e: React.FormEvent) {
+  async function handleStep1(e: React.FormEvent) {
     e.preventDefault()
     if (!name.trim()) { toast.error('Masukkan nama lengkap'); return }
     if (!email.trim() || !email.includes('@')) { toast.error('Email tidak valid'); return }
     if (password.length < 6) { toast.error('Password minimal 6 karakter'); return }
     if (password !== confirm) { toast.error('Password tidak cocok'); return }
+
+    setCheckingEmail(true)
+    try {
+      const res = await fetch(`/api/account/check-email?email=${encodeURIComponent(email.trim())}`)
+      const data = await res.json() as { exists: boolean }
+      if (data.exists) {
+        toast.error('Email ini sudah terdaftar. Silakan login.')
+        return
+      }
+    } catch {
+      // Fail open — let the server-side authorize() catch a true duplicate
+    } finally {
+      setCheckingEmail(false)
+    }
     setStep(2)
   }
 
@@ -253,7 +268,8 @@ function RegisterForm() {
                     )}
                   </div>
 
-                  <button type="submit" className="btn-luxury w-full py-3.5 mt-2 font-sans text-sm tracking-widest">
+                  <button type="submit" disabled={checkingEmail} className="btn-luxury w-full py-3.5 mt-2 font-sans text-sm tracking-widest disabled:opacity-60 flex items-center justify-center gap-2">
+                    {checkingEmail && <Loader2 size={14} className="animate-spin" />}
                     Lanjut →
                   </button>
                 </form>
