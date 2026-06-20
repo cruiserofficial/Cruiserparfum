@@ -4,14 +4,15 @@ import { useState, useCallback, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, Mail, Lock, Eye, EyeOff, MapPin, Search, X, Loader2, CheckCircle2, Chrome } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff, MapPin, Search, X, Loader2, CheckCircle2, Chrome, Phone } from 'lucide-react'
 import type { BiteshipArea } from '@/lib/biteship'
 import toast from 'react-hot-toast'
 
 function RegisterForm() {
   const router = useRouter()
+  const { update } = useSession()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') ?? '/'
 
@@ -28,6 +29,7 @@ function RegisterForm() {
   const [confirm, setConfirm] = useState('')
 
   // Step 2 — Alamat (opsional)
+  const [phone, setPhone] = useState('')
   const [street, setStreet] = useState('')
   const [areaQuery, setAreaQuery] = useState('')
   const [areaResults, setAreaResults] = useState<BiteshipArea[]>([])
@@ -82,24 +84,9 @@ function RegisterForm() {
     setStep(2)
   }
 
-  // Simpan alamat ke localStorage + buat sesi
   async function handleFinish() {
     setLoading(true)
     try {
-      // Simpan alamat di localStorage
-      if (street || selectedArea) {
-        const address = {
-          street,
-          kecamatan: selectedArea?.administrative_division_level_3_name ?? '',
-          kota: selectedArea?.administrative_division_level_2_name ?? '',
-          provinsi: selectedArea?.administrative_division_level_1_name ?? '',
-          postalCode: selectedArea?.postal_code ?? '',
-          areaId: selectedArea?.id ?? '',
-        }
-        localStorage.setItem('cruiser_address', JSON.stringify(address))
-      }
-
-      // Buat sesi NextAuth
       const result = await signIn('credentials', {
         email,
         password,
@@ -109,13 +96,38 @@ function RegisterForm() {
         redirect: false,
       })
 
-      if (result?.ok) {
-        toast.success(`Selamat datang, ${name.split(' ')[0]}! 🎉`)
-        router.push(callbackUrl)
-        router.refresh()
-      } else {
+      if (!result?.ok) {
         toast.error('Gagal membuat akun. Coba lagi.')
+        return
       }
+
+      // Jika alamat lengkap diisi, simpan ke DB sekaligus jadi profil yang
+      // bisa dipakai otomatis nanti di checkout — tanpa ini, address yang
+      // diisi di sini sebelumnya cuma tersimpan di localStorage dan hilang.
+      if (phone.trim() && street.trim() && selectedArea) {
+        try {
+          await fetch('/api/account/complete-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              phone: phone.trim(),
+              address: street.trim(),
+              district: selectedArea.administrative_division_level_3_name,
+              city: selectedArea.administrative_division_level_2_name,
+              province: selectedArea.administrative_division_level_1_name,
+              postalCode: selectedArea.postal_code,
+              areaId: selectedArea.id,
+            }),
+          })
+          await update({ profileComplete: true })
+        } catch {
+          // Non-fatal — the mandatory /complete-profile gate will catch it later
+        }
+      }
+
+      toast.success(`Selamat datang, ${name.split(' ')[0]}! 🎉`)
+      router.push(callbackUrl)
+      router.refresh()
     } catch {
       toast.error('Terjadi kesalahan. Coba lagi.')
     } finally {
@@ -287,6 +299,21 @@ function RegisterForm() {
                 <div className="text-center mb-2">
                   <p className="font-sans text-xs text-cream/40">Halo, <span className="text-cream">{name}</span>! 👋</p>
                   <p className="font-sans text-xs text-cream/30 mt-1">Isi alamat pengiriman utama kamu (opsional)</p>
+                </div>
+
+                {/* Nomor HP */}
+                <div>
+                  <label className="font-sans text-[11px] tracking-widest uppercase text-cream/40 block mb-1.5">Nomor HP</label>
+                  <div className="relative">
+                    <Phone size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cream/25 pointer-events-none" />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="08xxxxxxxxxx"
+                      className="w-full bg-white/[0.04] border border-white/10 focus:border-gold/50 outline-none pl-9 pr-4 py-3 font-sans text-sm text-cream placeholder:text-cream/20 transition-colors"
+                    />
+                  </div>
                 </div>
 
                 {/* Detail jalan */}

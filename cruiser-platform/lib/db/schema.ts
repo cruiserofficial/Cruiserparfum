@@ -8,9 +8,11 @@ export const users = sqliteTable('users', {
   role: text('role', { enum: ['customer', 'admin'] }).notNull().default('customer'),
   phone: text('phone'),
   address: text('address'),
+  district: text('district'),
   city: text('city'),
   province: text('province'),
   postalCode: text('postal_code'),
+  areaId: text('area_id'), // Biteship area id — needed to auto-fetch shipping rates at checkout
   profileComplete: integer('profile_complete', { mode: 'boolean' }).notNull().default(false),
   createdAt: text('created_at').notNull(),
 })

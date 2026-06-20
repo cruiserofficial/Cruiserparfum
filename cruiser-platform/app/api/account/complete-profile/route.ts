@@ -8,9 +8,11 @@ import { eq } from 'drizzle-orm'
 const profileSchema = z.object({
   phone: z.string().min(9),
   address: z.string().min(10),
+  district: z.string().optional().default(''),
   city: z.string().min(2),
   province: z.string().min(2),
   postalCode: z.string().min(4),
+  areaId: z.string().optional().default(''),
 })
 
 export async function POST(req: NextRequest) {
@@ -27,9 +29,11 @@ export async function POST(req: NextRequest) {
     await db.update(users).set({
       phone: data.phone,
       address: data.address,
+      district: data.district || null,
       city: data.city,
       province: data.province,
       postalCode: data.postalCode,
+      areaId: data.areaId || null,
       profileComplete: true,
     }).where(eq(users.id, session.user.id))
 

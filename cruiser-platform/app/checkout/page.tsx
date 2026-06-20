@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -86,6 +87,7 @@ function SectionCard({ icon, title, children }: { icon: React.ReactNode; title: 
 
 export default function CheckoutPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const { items, clearCart } = useCartStore()
   const { addOrder } = useCustomerOrderStore()
   const [step, setStep] = useState<Step>(1)
@@ -116,6 +118,40 @@ export default function CheckoutPage() {
     resolver: zodResolver(schema),
     defaultValues: { paymentMethod: 'qris' },
   })
+
+  // Prefill from the customer's saved profile so returning customers don't
+  // have to retype their address every time they check out.
+  useEffect(() => {
+    if (!session?.user) return
+    if (session.user.email) form.setValue('email', session.user.email)
+    if (session.user.name) form.setValue('recipient', session.user.name)
+
+    fetch('/api/account/profile')
+      .then((res) => res.json())
+      .then((data: { profile: {
+        name?: string | null; phone?: string | null; address?: string | null
+        district?: string | null; city?: string | null; province?: string | null
+        postalCode?: string | null; areaId?: string | null
+      } | null }) => {
+        const profile = data.profile
+        if (!profile) return
+        if (profile.name) form.setValue('recipient', profile.name)
+        if (profile.phone) form.setValue('phone', profile.phone)
+        if (profile.address) form.setValue('address', profile.address)
+        if (profile.areaId && profile.city && profile.province && profile.postalCode) {
+          setSelectedArea({
+            id: profile.areaId,
+            name: `${profile.district ?? ''}, ${profile.city}, ${profile.province}. ${profile.postalCode}`,
+            administrative_division_level_1_name: profile.province,
+            administrative_division_level_2_name: profile.city,
+            administrative_division_level_3_name: profile.district ?? '',
+            postal_code: profile.postalCode,
+          })
+        }
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.user])
 
   const handleAreaSearch = useCallback((q: string) => {
     setAreaQuery(q)

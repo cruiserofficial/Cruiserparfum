@@ -61,9 +61,11 @@ function CompleteProfileForm() {
         body: JSON.stringify({
           phone: phone.trim(),
           address: street.trim(),
+          district: selectedArea.administrative_division_level_3_name,
           city: selectedArea.administrative_division_level_2_name,
           province: selectedArea.administrative_division_level_1_name,
           postalCode: selectedArea.postal_code,
+          areaId: selectedArea.id,
         }),
       })
       if (!res.ok) throw new Error('Gagal menyimpan')
