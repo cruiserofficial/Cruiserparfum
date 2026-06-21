@@ -56,6 +56,9 @@ export const orders = sqliteTable('orders', {
   notes: text('notes'),
   shippingMethod: text('shipping_method').notNull().default(''),
   courier: text('courier'),
+  courierCode: text('courier_code'), // Biteship courier_company code, e.g. "jne"
+  serviceCode: text('service_code'), // Biteship courier_type code, e.g. "reg"
+  destinationAreaId: text('destination_area_id'), // Biteship area id for the delivery address
   shippingCost: integer('shipping_cost').notNull().default(0),
   subtotal: integer('subtotal').notNull(),
   total: integer('total').notNull(),
@@ -67,6 +70,8 @@ export const orders = sqliteTable('orders', {
   paymentProofUrl: text('payment_proof_url'), // base64 image of bank transfer proof, set by customer
   paymentConfirmedAt: text('payment_confirmed_at'), // set when admin clicks "Proses" — gates Total Revenue
   customerConfirmedAt: text('customer_confirmed_at'), // set when customer clicks "Pesanan Diterima" — unlocks review
+  biteshipOrderId: text('biteship_order_id'), // set once a real shipment is created with Biteship
+  biteshipError: text('biteship_error'), // last error message if shipment creation failed, for admin visibility
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 })

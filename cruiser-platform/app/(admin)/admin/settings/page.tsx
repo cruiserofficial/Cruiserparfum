@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Save, Upload, X, Plus, Trash2, QrCode, Building2, Eye, EyeOff } from 'lucide-react'
+import { Save, Upload, X, Plus, Trash2, QrCode, Building2, Eye, EyeOff, Search, MapPin, Loader2, CheckCircle2, Truck } from 'lucide-react'
+import type { BiteshipArea } from '@/lib/biteship'
 import toast from 'react-hot-toast'
 
 interface BankAccount {
@@ -38,6 +39,17 @@ export default function SettingsPage() {
   const [showKey, setShowKey] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
+  const [shippingOrigin, setShippingOrigin] = useState({
+    contactName: '',
+    phone: '',
+    address: '',
+  })
+  const [originArea, setOriginArea] = useState<BiteshipArea | null>(null)
+  const [areaQuery, setAreaQuery] = useState('')
+  const [areaResults, setAreaResults] = useState<BiteshipArea[]>([])
+  const [searchingArea, setSearchingArea] = useState(false)
+  const areaSearchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const loadSettings = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/settings')
@@ -71,6 +83,27 @@ export default function SettingsPage() {
       }
       if (Array.isArray(settings.bank_accounts)) {
         setBankAccounts(settings.bank_accounts as BankAccount[])
+      }
+      if (settings.shipping_origin) {
+        const origin = settings.shipping_origin as {
+          contactName?: string; phone?: string; address?: string
+          areaId?: string; district?: string; city?: string; province?: string; postalCode?: string
+        }
+        setShippingOrigin({
+          contactName: origin.contactName ?? '',
+          phone: origin.phone ?? '',
+          address: origin.address ?? '',
+        })
+        if (origin.areaId) {
+          setOriginArea({
+            id: origin.areaId,
+            name: origin.district ?? '',
+            administrative_division_level_1_name: origin.province ?? '',
+            administrative_division_level_2_name: origin.city ?? '',
+            administrative_division_level_3_name: origin.district ?? '',
+            postal_code: origin.postalCode ?? '',
+          })
+        }
       }
     } catch {
       // Settings not critical — fail silently
@@ -159,6 +192,50 @@ export default function SettingsPage() {
     toast.success('Rekening dihapus')
   }
 
+  const handleAreaSearch = useCallback((q: string) => {
+    setAreaQuery(q)
+    setOriginArea(null)
+    if (areaSearchTimeout.current) clearTimeout(areaSearchTimeout.current)
+    if (q.length < 3) { setAreaResults([]); return }
+    areaSearchTimeout.current = setTimeout(async () => {
+      setSearchingArea(true)
+      try {
+        const res = await fetch(`/api/shipping/areas?q=${encodeURIComponent(q)}`)
+        const data = await res.json() as { areas: BiteshipArea[] }
+        setAreaResults(data.areas ?? [])
+      } catch { setAreaResults([]) }
+      finally { setSearchingArea(false) }
+    }, 400)
+  }, [])
+
+  function selectOriginArea(area: BiteshipArea) {
+    setOriginArea(area)
+    setAreaQuery('')
+    setAreaResults([])
+  }
+
+  async function saveShippingOrigin() {
+    if (!shippingOrigin.contactName.trim() || !shippingOrigin.phone.trim() || !shippingOrigin.address.trim()) {
+      toast.error('Lengkapi nama, telepon, dan alamat pengirim')
+      return
+    }
+    if (!originArea) {
+      toast.error('Pilih kecamatan asal pengiriman')
+      return
+    }
+    await saveToDb('shipping_origin', {
+      contactName: shippingOrigin.contactName.trim(),
+      phone: shippingOrigin.phone.trim(),
+      address: shippingOrigin.address.trim(),
+      areaId: originArea.id,
+      district: originArea.administrative_division_level_3_name,
+      city: originArea.administrative_division_level_2_name,
+      province: originArea.administrative_division_level_1_name,
+      postalCode: originArea.postal_code,
+    })
+    toast.success('Alamat pengirim disimpan')
+  }
+
   if (!loaded) return null
 
   return (
@@ -206,6 +283,95 @@ export default function SettingsPage() {
         </div>
         <button onClick={saveGeneral} className="btn-luxury flex items-center gap-2 px-5 py-2.5 text-xs">
           <Save size={13} /> Simpan Pengaturan Umum
+        </button>
+      </div>
+
+      {/* Alamat Pengirim / Pickup */}
+      <div className="glass p-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <Truck size={15} className="text-gold/70" />
+          <h2 className="font-sans text-xs tracking-widest uppercase text-gold/70">Alamat Pengirim (Pickup)</h2>
+        </div>
+        <p className="font-sans text-xs text-cream/30">
+          Alamat ini digunakan sebagai titik jemput saat order otomatis dikirim ke Biteship setelah pembayaran dikonfirmasi.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="font-sans text-[10px] tracking-widest uppercase text-cream/40 block mb-1.5">Nama Kontak</label>
+            <input
+              type="text"
+              value={shippingOrigin.contactName}
+              onChange={(e) => setShippingOrigin((p) => ({ ...p, contactName: e.target.value }))}
+              placeholder="Nama penanggung jawab gudang"
+              className="input-luxury w-full text-sm"
+            />
+          </div>
+          <div>
+            <label className="font-sans text-[10px] tracking-widest uppercase text-cream/40 block mb-1.5">Nomor Telepon</label>
+            <input
+              type="tel"
+              value={shippingOrigin.phone}
+              onChange={(e) => setShippingOrigin((p) => ({ ...p, phone: e.target.value }))}
+              placeholder="08xxxxxxxxxx"
+              className="input-luxury w-full text-sm"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="font-sans text-[10px] tracking-widest uppercase text-cream/40 block mb-1.5">Alamat Lengkap</label>
+          <textarea
+            value={shippingOrigin.address}
+            onChange={(e) => setShippingOrigin((p) => ({ ...p, address: e.target.value }))}
+            rows={2}
+            placeholder="Nama jalan, nomor, RT/RW..."
+            className="input-luxury w-full text-sm resize-none"
+          />
+        </div>
+        <div>
+          <label className="font-sans text-[10px] tracking-widest uppercase text-cream/40 block mb-1.5">Kecamatan Asal</label>
+          {originArea ? (
+            <div className="border border-gold/30 bg-gold/5 px-3 py-2.5 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <CheckCircle2 size={14} className="text-gold flex-shrink-0" />
+                <div>
+                  <p className="font-sans text-sm text-cream truncate">{originArea.administrative_division_level_3_name}, {originArea.administrative_division_level_2_name}</p>
+                  <p className="font-sans text-xs text-cream/35">{originArea.administrative_division_level_1_name} · {originArea.postal_code}</p>
+                </div>
+              </div>
+              <button type="button" onClick={() => { setOriginArea(null); setAreaQuery('') }} className="text-cream/30 hover:text-cream flex-shrink-0">
+                <X size={13} />
+              </button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cream/25 pointer-events-none" />
+              <input
+                type="text"
+                value={areaQuery}
+                onChange={(e) => handleAreaSearch(e.target.value)}
+                placeholder="Cari kecamatan atau kode pos..."
+                className="w-full bg-white/[0.04] border border-white/10 focus:border-gold/50 outline-none pl-9 pr-9 py-3 font-sans text-sm text-cream placeholder:text-cream/20 transition-colors"
+              />
+              {searchingArea && <Loader2 size={13} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-cream/25 animate-spin" />}
+              {areaResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 z-50 border border-white/10 border-t-0 bg-[#111] max-h-44 overflow-y-auto">
+                  {areaResults.map((area) => (
+                    <button key={area.id} type="button" onClick={() => selectOriginArea(area)}
+                      className="w-full text-left px-3 py-2.5 hover:bg-white/5 border-b border-white/[0.04] last:border-0 flex items-start gap-2">
+                      <MapPin size={12} className="text-cream/20 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-sans text-sm text-cream">{area.administrative_division_level_3_name}</p>
+                        <p className="font-sans text-xs text-cream/35">{area.administrative_division_level_2_name} · {area.postal_code}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <button onClick={saveShippingOrigin} className="btn-luxury flex items-center gap-2 px-5 py-2.5 text-xs">
+          <Save size={13} /> Simpan Alamat Pengirim
         </button>
       </div>
 

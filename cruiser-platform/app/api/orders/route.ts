@@ -6,6 +6,7 @@ import { orders, orderItems } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { auth } from '@/auth'
 import { sendTelegramMessage, buildNewOrderMessage } from '@/lib/telegram'
+import { cancelExpiredOrders } from '@/lib/order-expiry'
 
 const orderSchema = z.object({
   email: z.string().email(),
@@ -21,6 +22,7 @@ const orderSchema = z.object({
   shippingCourier: z.string().optional(),
   shippingService: z.string().optional(),
   shippingCode: z.string().optional(),
+  serviceCode: z.string().optional(),
   paymentMethod: z.string(),
   area: z.object({
     id: z.string(),
@@ -81,6 +83,9 @@ export async function POST(req: NextRequest) {
         notes: data.notes ?? null,
         shippingMethod,
         courier: data.shippingCourier ?? null,
+        courierCode: data.shippingCode ?? null,
+        serviceCode: data.serviceCode ?? null,
+        destinationAreaId: data.area?.id ?? null,
         shippingCost: data.shippingCost,
         subtotal: data.subtotal,
         total: data.total,
@@ -207,6 +212,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await getDb()
+    await cancelExpiredOrders(db).catch(() => {})
     const orderRows = await db.select().from(orders).where(eq(orders.number, orderNumber)).limit(1)
     if (!orderRows[0]) {
       return NextResponse.json({ orderNumber, status: 'pending' })

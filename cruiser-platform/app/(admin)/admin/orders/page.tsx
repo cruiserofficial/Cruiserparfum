@@ -41,6 +41,10 @@ interface Order {
   paymentProofUrl?: string | null
   paymentConfirmedAt?: string | null
   customerConfirmedAt?: string | null
+  courierCode?: string | null
+  serviceCode?: string | null
+  biteshipOrderId?: string | null
+  biteshipError?: string | null
   createdAt: string
   updatedAt: string
   items: OrderItem[]
@@ -145,15 +149,20 @@ export default function AdminOrdersPage() {
         body: JSON.stringify({ confirmPayment: true }),
       })
       if (!res.ok) throw new Error('Failed')
-      const now = new Date().toISOString()
+      const { order: updatedOrder } = await res.json()
       setOrders((prev) =>
         prev.map((o) =>
-          o.number === order.number
-            ? { ...o, paymentConfirmedAt: now, status: o.status === 'pending' ? 'processing' : o.status }
-            : o
+          o.number === order.number ? { ...o, ...updatedOrder } : o
         )
       )
-      toast.success(`Pembayaran ${order.number} dikonfirmasi — masuk Total Revenue`)
+      if (updatedOrder?.biteshipOrderId) {
+        toast.success(`Pembayaran ${order.number} dikonfirmasi & pengiriman Biteship dibuat otomatis`)
+      } else if (updatedOrder?.biteshipError) {
+        toast.success(`Pembayaran ${order.number} dikonfirmasi — masuk Total Revenue`)
+        toast.error(`Biteship gagal: ${updatedOrder.biteshipError}`)
+      } else {
+        toast.success(`Pembayaran ${order.number} dikonfirmasi — masuk Total Revenue`)
+      }
     } catch {
       toast.error('Gagal konfirmasi pembayaran')
     }
@@ -323,6 +332,12 @@ export default function AdminOrdersPage() {
                   )}
                   {order.customerConfirmedAt && (
                     <p className="font-sans text-[10px] text-emerald-400/70 mt-1.5">✓ Pelanggan sudah konfirmasi pesanan diterima</p>
+                  )}
+                  {order.biteshipOrderId && (
+                    <p className="font-sans text-[10px] text-emerald-400/70 mt-1.5">✓ Pengiriman Biteship dibuat otomatis</p>
+                  )}
+                  {order.biteshipError && !order.biteshipOrderId && (
+                    <p className="font-sans text-[10px] text-amber-400/70 mt-1.5">⚠ Biteship gagal: {order.biteshipError}</p>
                   )}
                 </div>
 

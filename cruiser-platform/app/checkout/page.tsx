@@ -247,6 +247,7 @@ export default function CheckoutPage() {
           shippingCourier: selectedRate?.courier_name,
           shippingService: selectedRate?.courier_service_name,
           shippingCode: selectedRate?.courier_code,
+          serviceCode: selectedRate?.courier_service_code,
           items: items.map((i) => ({ productId: i.productId, name: i.name, price: i.price, quantity: i.quantity, imageUrl: i.imageUrl })),
           subtotal, shippingCost, total, paymentMethod: selectedPayment,
         }),

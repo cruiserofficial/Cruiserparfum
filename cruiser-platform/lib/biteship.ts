@@ -99,6 +99,66 @@ export async function getShippingRates(params: RatesParams): Promise<ShippingRat
   return (data.pricing ?? []) as ShippingRate[]
 }
 
+export interface CreateOrderParams {
+  origin: {
+    contactName: string
+    contactPhone: string
+    address: string
+    areaId: string
+    postalCode: string
+  }
+  destination: {
+    contactName: string
+    contactPhone: string
+    address: string
+    areaId: string
+    postalCode: string
+  }
+  courierCode: string // e.g. "jne"
+  serviceCode: string // e.g. "reg"
+  orderNote?: string
+  items: Array<{ name: string; value: number; quantity: number; weight: number }>
+}
+
+export interface CreateOrderResult {
+  id: string
+  status: string
+  courier?: { waybill_id?: string; tracking_id?: string }
+}
+
+export async function createOrder(params: CreateOrderParams): Promise<CreateOrderResult> {
+  const { origin, destination, courierCode, serviceCode, orderNote, items } = params
+
+  const data = await biteshipFetch('/v1/orders', {
+    method: 'POST',
+    body: JSON.stringify({
+      origin_contact_name: origin.contactName,
+      origin_contact_phone: origin.contactPhone,
+      origin_address: origin.address,
+      origin_postal_code: Number(origin.postalCode) || undefined,
+      origin_area_id: origin.areaId,
+      destination_contact_name: destination.contactName,
+      destination_contact_phone: destination.contactPhone,
+      destination_address: destination.address,
+      destination_postal_code: Number(destination.postalCode) || undefined,
+      destination_area_id: destination.areaId,
+      courier_company: courierCode,
+      courier_type: serviceCode,
+      delivery_type: 'now',
+      order_note: orderNote ?? '',
+      items: items.map((item) => ({
+        name: item.name,
+        description: item.name,
+        value: item.value,
+        quantity: item.quantity,
+        weight: item.weight,
+      })),
+    }),
+  })
+
+  return data as CreateOrderResult
+}
+
 export function groupRatesByType(rates: ShippingRate[]) {
   const groups: Record<string, ShippingRate[]> = {
     'Instan': [],

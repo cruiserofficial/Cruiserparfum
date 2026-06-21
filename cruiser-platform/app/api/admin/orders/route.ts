@@ -3,6 +3,7 @@ import { auth } from '@/auth'
 import { getDb } from '@/lib/db/index'
 import { orders, orderItems } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
+import { cancelExpiredOrders } from '@/lib/order-expiry'
 
 export async function GET() {
   const session = await auth()
@@ -12,6 +13,7 @@ export async function GET() {
 
   try {
     const db = await getDb()
+    await cancelExpiredOrders(db).catch(() => {})
     const allOrders = await db.select().from(orders).orderBy(desc(orders.createdAt))
 
     // Fetch items for each order

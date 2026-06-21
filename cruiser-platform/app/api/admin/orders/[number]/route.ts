@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { getDb } from '@/lib/db/index'
-import { orders } from '@/lib/db/schema'
+import { orders, orderItems, adminSettings } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { createOrder, PRODUCT_WEIGHT_GRAMS } from '@/lib/biteship'
 
 const updateOrderSchema = z.object({
   status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
@@ -47,9 +48,69 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
     await db.update(orders).set(updateData).where(eq(orders.number, orderNumber))
 
-    const updated = await db.select().from(orders).where(eq(orders.number, orderNumber)).limit(1)
+    let updated = await db.select().from(orders).where(eq(orders.number, orderNumber)).limit(1)
     if (!updated[0]) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+    }
+
+    // Attempt to create a real Biteship shipment when payment is confirmed.
+    // Failures here must never block payment confirmation — admin can still
+    // enter a tracking number manually as a fallback.
+    const order = updated[0]
+    if (data.confirmPayment && !order.biteshipOrderId && order.courierCode && order.serviceCode && order.destinationAreaId) {
+      try {
+        const originRow = await db.select().from(adminSettings).where(eq(adminSettings.key, 'shipping_origin')).limit(1)
+        const origin = originRow[0] ? JSON.parse(originRow[0].value) as {
+          contactName?: string; phone?: string; address?: string; areaId?: string; postalCode?: string
+        } : null
+
+        if (!origin?.contactName || !origin.phone || !origin.address || !origin.areaId) {
+          throw new Error('Alamat pengirim belum diatur di Admin Settings')
+        }
+
+        const items = await db.select().from(orderItems).where(eq(orderItems.orderId, order.id))
+
+        const result = await createOrder({
+          origin: {
+            contactName: origin.contactName,
+            contactPhone: origin.phone,
+            address: origin.address,
+            areaId: origin.areaId,
+            postalCode: origin.postalCode ?? '',
+          },
+          destination: {
+            contactName: order.recipient,
+            contactPhone: order.phone,
+            address: order.address,
+            areaId: order.destinationAreaId,
+            postalCode: order.postalCode,
+          },
+          courierCode: order.courierCode,
+          serviceCode: order.serviceCode,
+          orderNote: `Order ${order.number}`,
+          items: items.map((item) => ({
+            name: item.name,
+            value: item.price,
+            quantity: item.quantity,
+            weight: PRODUCT_WEIGHT_GRAMS,
+          })),
+        })
+
+        await db.update(orders).set({
+          biteshipOrderId: result.id,
+          biteshipError: null,
+          trackingNumber: order.trackingNumber ?? result.courier?.waybill_id ?? null,
+          updatedAt: now,
+        }).where(eq(orders.number, orderNumber))
+      } catch (shipError) {
+        console.error('Biteship order creation failed (non-fatal):', shipError)
+        await db.update(orders).set({
+          biteshipError: shipError instanceof Error ? shipError.message : 'Gagal membuat pengiriman Biteship',
+          updatedAt: now,
+        }).where(eq(orders.number, orderNumber))
+      }
+
+      updated = await db.select().from(orders).where(eq(orders.number, orderNumber)).limit(1)
     }
 
     return NextResponse.json({ order: updated[0] })
