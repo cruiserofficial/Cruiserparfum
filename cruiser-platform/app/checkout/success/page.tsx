@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2, Package, ArrowRight, Copy, Upload } from 'lucide-react'
 import { SITE } from '@/lib/constants'
+import { formatPrice } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
 interface BankAccount {
@@ -62,6 +63,7 @@ function SuccessContent() {
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([])
   const [proofUploaded, setProofUploaded] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [orderTotal, setOrderTotal] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -71,6 +73,16 @@ function SuccessContent() {
       .then((data: { bankAccounts?: BankAccount[] }) => setBankAccounts(data.bankAccounts ?? []))
       .catch(() => {})
   }, [method])
+
+  useEffect(() => {
+    if (orderNumber === '—') return
+    fetch(`/api/orders?orderNumber=${encodeURIComponent(orderNumber)}`)
+      .then((res) => res.json())
+      .then((data: { total?: number }) => {
+        if (typeof data.total === 'number') setOrderTotal(data.total)
+      })
+      .catch(() => {})
+  }, [orderNumber])
 
   function copyOrderNumber() {
     navigator.clipboard.writeText(orderNumber)
@@ -145,6 +157,16 @@ function SuccessContent() {
           </div>
           <p className="font-sans text-[10px] text-cream/30 mt-2">Simpan nomor ini untuk melacak pesanan kamu</p>
         </div>
+
+        {/* Total to pay */}
+        {method !== 'midtrans' && (
+          <div className="border border-white/[0.08] bg-white/[0.02] p-5 mb-6 text-center">
+            <p className="font-sans text-[10px] tracking-widest uppercase text-cream/40 mb-2">Total yang Harus Dibayar</p>
+            <p className="font-display text-3xl text-cream">
+              {orderTotal !== null ? formatPrice(orderTotal) : '...'}
+            </p>
+          </div>
+        )}
 
         {/* Payment Instructions */}
         {method !== 'midtrans' && (
